@@ -1,0 +1,31 @@
+import os
+import shutil
+import random
+
+# Define the source (train) and destination (test) directories
+source_dir = '/home/saif/dataset/dermonet/train'
+test_dir = '/home/saif/dataset/test'
+
+# Walk through the source directory
+for subdir, dirs, files in os.walk(source_dir):
+    for dir in dirs:
+        # Create corresponding directories in the test directory
+        source_subdir = os.path.join(subdir, dir)
+        test_subdir = source_subdir.replace(source_dir, test_dir)
+
+        if not os.path.exists(test_subdir):
+            os.makedirs(test_subdir)
+            print(f"Directory created: {test_subdir}")
+
+    # Filter jpg files
+    jpg_files = [file for file in files if file.endswith('.jpg')]
+
+    # Randomly select 30% of jpg files
+    selected_files = random.sample(jpg_files, int(len(jpg_files) * 0.3))
+
+    # Copy selected files to the corresponding test directory
+    for file in selected_files:
+        shutil.copy(os.path.join(subdir, file), os.path.join(subdir.replace(source_dir, test_dir), file))
+        print(f"Copied {file} to {test_subdir}")
+
+print("Dataset creation complete.")
